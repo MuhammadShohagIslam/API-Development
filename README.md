@@ -1,5 +1,4 @@
 <h2 align="center">I am Muhammad Jhohirul Islam Shohag</h2>
-<p align="center">I am Full-Stack Web Developer</p>
 
 # Let's Talk About My Blog Rest API With TypeScript
 
