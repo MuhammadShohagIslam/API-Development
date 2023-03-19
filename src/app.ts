@@ -50,7 +50,6 @@ fs.writeFile(
         if (err) {
             return console.log(err);
         }
-        console.log("Updated Swagger.json");
     }
 );
 

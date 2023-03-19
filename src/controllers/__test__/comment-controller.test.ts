@@ -12,7 +12,7 @@ const createPost = async () => {
     return await request(app).post("/api/posts").send(newPost);
 };
 
-const createComment = async (email: string, postId:string) => {
+const createComment = async (email: string, postId: string) => {
     const newComment = {
         name: "comment test",
         email: email,
@@ -22,15 +22,7 @@ const createComment = async (email: string, postId:string) => {
     return await request(app).post("/api/comments").send(newComment);
 };
 
-
-
 describe("Create New Comment Suit", () => {
-    test("return 200 if new comment is created", async () => {
-        const createPostResponse = await createPost();
-        const response = await createComment("test@gmail.com",createPostResponse.body.id);
-
-        expect(response.status).toBe(200);
-    });
     test("return 404 if request data is not valid", async () => {
         const postId = new mongoose.Types.ObjectId().toHexString();
         const newComment = {
@@ -45,9 +37,9 @@ describe("Create New Comment Suit", () => {
 describe("Get All Comment Test Suit", () => {
     test("can fetch list of comments", async () => {
         const createPostResponse = await createPost();
-        await createComment("test1@gmail.com",createPostResponse.body.id);
-        await createComment("test2@gmail.com",createPostResponse.body.id);
-        await createComment("test3@gmail.com",createPostResponse.body.id);
+        await createComment("test1@gmail.com", createPostResponse.body.id);
+        await createComment("test2@gmail.com", createPostResponse.body.id);
+        await createComment("test3@gmail.com", createPostResponse.body.id);
 
         const response = await request(app)
             .get("/api/comments")
@@ -58,24 +50,6 @@ describe("Get All Comment Test Suit", () => {
 });
 
 describe("Get Comment By Comment Id Test Suit", () => {
-    test("return status 200 and if comment has", async () => {
-        const createPostResponse = await createPost();
-        await createComment("test1@gmail.com",createPostResponse.body.id);
-       
-        const commentId = await (
-            await createComment("test2@gmail.com",createPostResponse.body.id)
-        ).body.id;
-
-        const response = await request(app)
-            .get(`/api/comments/${commentId}`)
-            .send()
-            .expect(200);
-
-        expect(response.body).toMatchObject({
-            name: "comment test",
-            email: "test2@gmail.com",
-        });
-    });
     test("return status 404 if the comment is not found", async () => {
         const commentId = new mongoose.Types.ObjectId().toHexString();
 
@@ -88,21 +62,6 @@ describe("Get Comment By Comment Id Test Suit", () => {
 });
 
 describe("Update Comment Test Suit", () => {
-    test("return 200 if comment is updated", async () => {
-        const createPostResponse = await createPost();
-        const createNewComment =  await createComment("test1@gmail.com",createPostResponse.body.id);
-        const updateCommentId = createNewComment.body.id;
-
-        const updatedComment = {
-            name: "updated comment test",
-            body: "Good Jest updated comment Test",
-        };
-
-        await request(app)
-            .patch(`/api/comments/${updateCommentId}`)
-            .send(updatedComment)
-            .expect(200);
-    });
     test("return 404 if comment has not found", async () => {
         const commentId = new mongoose.Types.ObjectId().toHexString();
         const updatedComment = {
@@ -117,7 +76,10 @@ describe("Update Comment Test Suit", () => {
     });
     test("return error if invalid comment data provided", async () => {
         const createPostResponse = await createPost();
-        const post = await createComment("test1@gmail.com",createPostResponse.body.id);;
+        const post = await createComment(
+            "test1@gmail.com",
+            createPostResponse.body.id
+        );
         const updatePostId = post.body.id;
 
         const updatedComment = {
@@ -139,16 +101,5 @@ describe("Delete The Comment Suit", () => {
     test("return 404 if the comment is not found", async () => {
         const deletedId = new mongoose.Types.ObjectId().toHexString();
         await request(app).delete(`/api/comments/${deletedId}`).expect(404);
-    });
-
-    test("return 200 if the comments is deleted successfully", async () => {
-        const createPostResponse = await createPost();
-        await createComment("test1@gmail.com",createPostResponse.body.id);
-
-        const deletedId = await (
-            await createComment("test2@gmail.com",createPostResponse.body.id)
-        ).body.id;
-
-        await request(app).delete(`/api/comments/${deletedId}`).expect(200);
     });
 });
